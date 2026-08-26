@@ -1,0 +1,32 @@
+# ================== 强制统一换行符 ==================
+# 所有文本文件自动识别，但统一用 LF 存储和提交
+# 这能解决 Windows 上 CRLF 和 LF 混用导致的"假差异"
+* text=auto eol=lf
+
+# ================== 明确指定为文本文件 ==================
+# Markdown 笔记
+*.md        text eol=lf
+*.markdown  text eol=lf
+*.txt       text eol=lf
+
+# CSS 和 JSON 配置
+*.css       text eol=lf
+*.json      text eol=lf
+*.js        text eol=lf
+*.html      text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+
+# ================== 明确指定为二进制文件（不要转换） ==================
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.bmp    binary
+*.ico    binary
+*.pdf    binary
+*.mp3    binary
+*.wav    binary
+*.mp4    binary
+*.zip    binary
+*.7z     binary

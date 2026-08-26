@@ -1,0 +1,21 @@
+# EditorConfig 配置
+# 放在 Obsidian vault 根目录，大部分编辑器和 Git 工具会识别
+# 主要解决：尾部空格、行号差异、缩进不一致
+
+# 全局默认
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Markdown 文件：空格缩进保持 2 格（更紧凑）
+[*.md]
+indent_size = 2
+
+# JSON 配置：4 格缩进
+[*.json]
+indent_style = tab
+indent_size = 4

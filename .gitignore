@@ -1,0 +1,29 @@
+# ================== Obsidian 本地状态（不该提交） ==================
+# 窗口布局、插件缓存、图形位置等——每个人的都不一样，提交上去只会冲突
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.obsidian/graph.json
+
+# Obsidian 插件的运行时数据（每个插件自己的配置/缓存）
+# 注意：.obsidian/plugins/ 目录本身保留（里面有插件代码），但忽略插件的 data.json
+.obsidian/plugins/*/data.json
+
+# 回收站（本地删除的文件暂存）
+.trash/
+
+# ================== 系统垃圾文件 ==================
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+
+# ================== 编辑器临时文件 ==================
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# ================== 日志 ==================
+*.log
