@@ -1,0 +1,9 @@
+{
+  "id": "refined-layout",
+  "name": "Refined Layout",
+  "version": "1.0.1",
+  "minAppVersion": "1.12.7",
+  "description": "Independent layout and typography controls for editing and reading views.",
+  "author": "Floratina",
+  "isDesktopOnly": false
+}

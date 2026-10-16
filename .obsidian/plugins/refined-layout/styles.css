@@ -1,0 +1,1345 @@
+/*
+ * Refined Layout 0.1.0
+ * Production styles are intentionally free of arithmetic expressions.
+ * Runtime values are supplied by the plugin through --rl-* properties.
+ */
+
+/* --------------------------------------------------------------------------
+   Editing view: body, paragraphs and lists
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-body .markdown-source-view.mod-cm6 .cm-line:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-body-line-height) !important;
+  margin-block-start: 0 !important;
+  margin-block-end: 0 !important;
+}
+
+body.refined-layout-enabled.rl-edit-body .markdown-source-view.mod-cm6 .cm-line:has(br:only-child):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-body-empty-line-height-em) !important;
+}
+
+/* Source-view spacing must be padding, never margin. CodeMirror measures line
+   heights with getBoundingClientRect(), which excludes margins, so a margin on
+   .cm-line desyncs its height map from the real layout and the click/selection
+   target drifts further down the document with every gap. Padding is inside
+   the border box, so it is measured — and it keeps the gap clickable instead
+   of leaving a dead zone between lines.
+   Because padding does not collapse, the gap between two adjacent items is
+   "条目下间距 + 条目上间距" here, whereas the reading view (which uses margins
+   on real list elements) collapses them to the larger of the two. */
+body.refined-layout-enabled.rl-edit-body .markdown-source-view.mod-cm6 .cm-content > :is(.HyperMD-list-line, .HyperMD-list-line-nobullet):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-block-start: var(--rl-edit-body-list-item-start-em) !important;
+  padding-block-end: var(--rl-edit-body-list-item-end-em) !important;
+}
+
+/* A source-view list has no wrapper element, so its outer edges are the first
+   and last line of an unbroken run of list lines.
+   Note: for a list directly after a heading this competes with the
+   "标题后首元素 → 紧邻列表间距" rule on the same physical property at equal
+   specificity, and that rule wins because it comes later in this file. That is
+   the intended precedence — it is the setting dedicated to that exact case. */
+body.refined-layout-enabled.rl-edit-body .markdown-source-view.mod-cm6 .cm-content > :is(.HyperMD-list-line, .HyperMD-list-line-nobullet):first-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-edit-body .markdown-source-view.mod-cm6 .cm-content > :not(.HyperMD-list-line, .HyperMD-list-line-nobullet) + :is(.HyperMD-list-line, .HyperMD-list-line-nobullet):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-block-start: var(--rl-edit-body-list-block-start-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-body .markdown-source-view.mod-cm6 .cm-content > :is(.HyperMD-list-line, .HyperMD-list-line-nobullet):last-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-edit-body .markdown-source-view.mod-cm6 .cm-content > :is(.HyperMD-list-line, .HyperMD-list-line-nobullet):has(+ :not(.HyperMD-list-line, .HyperMD-list-line-nobullet)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-block-end: var(--rl-edit-body-list-block-end-em) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Reading view: body, paragraphs and lists
+   -------------------------------------------------------------------------- */
+
+/* Canvas owns its complete layout; Mermaid owns its internal labels and nodes.
+   Zero-specificity guards on rule subjects exclude these surfaces in both modes.
+   Only the dedicated Mermaid rules may size the outer container and root SVG. */
+
+/* DataviewJS blocks own their descendants' layout. The :where() wrapper keeps
+   this boundary from changing selector specificity outside those blocks. */
+body.refined-layout-enabled.rl-read-body .markdown-rendered p:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-body-line-height) !important;
+  margin-block-start: 0 !important;
+  margin-block-end: var(--rl-read-body-paragraph-spacing-em) !important;
+}
+
+/* Item-level gaps stop short of the list's own edges so they never collapse
+   into the block-level margins below. */
+body.refined-layout-enabled.rl-read-body .markdown-rendered :is(.el-ul, .el-ol) li + li:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-read-body-list-item-start-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-body .markdown-rendered :is(.el-ul, .el-ol) li:not(:last-child):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-end: var(--rl-read-body-list-item-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-body .markdown-rendered .el-ol > ol:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-read-body .markdown-rendered .el-ul > ul:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-read-body-list-block-start-em) !important;
+  margin-block-end: var(--rl-read-body-list-block-end-em) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Editing view: headings and theme-provided decorations
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-1:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-headings-h1-top-em);
+  line-height: var(--rl-edit-headings-h1-line-height) !important;
+  padding-top: var(--rl-edit-headings-h1-top-em) !important;
+  padding-bottom: var(--rl-edit-headings-h1-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-2:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-headings-h2-top-em);
+  line-height: var(--rl-edit-headings-h2-line-height) !important;
+  padding-top: var(--rl-edit-headings-h2-top-em) !important;
+  padding-bottom: var(--rl-edit-headings-h2-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-3:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-headings-h3-top-em);
+  line-height: var(--rl-edit-headings-h3-line-height) !important;
+  padding-top: var(--rl-edit-headings-h3-top-em) !important;
+  padding-bottom: var(--rl-edit-headings-h3-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-4:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-headings-h4-top-em);
+  line-height: var(--rl-edit-headings-h4-line-height) !important;
+  padding-top: var(--rl-edit-headings-h4-top-em) !important;
+  padding-bottom: var(--rl-edit-headings-h4-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-5:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-headings-h5-top-em);
+  line-height: var(--rl-edit-headings-h5-line-height) !important;
+  padding-top: var(--rl-edit-headings-h5-top-em) !important;
+  padding-bottom: var(--rl-edit-headings-h5-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-6:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-headings-h6-top-em);
+  line-height: var(--rl-edit-headings-h6-line-height) !important;
+  padding-top: var(--rl-edit-headings-h6-top-em) !important;
+  padding-bottom: var(--rl-edit-headings-h6-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .cm-content [class*="HyperMD-header"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  position: relative;
+  text-indent: 0 !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .cm-content [class*="HyperMD-header"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  position: absolute !important;
+  top: 50% !important;
+  left: var(--rl-edit-heading-decoration-left-px) !important;
+  display: inline-block !important;
+  width: var(--rl-edit-heading-decoration-width-px) !important;
+  margin-right: var(--rl-edit-heading-decoration-margin-right-px) !important;
+  border-radius: var(--rl-edit-heading-decoration-radius-px) !important;
+  vertical-align: middle !important;
+  transform: translateY(-50%) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .cm-content > .cm-line:first-child[class*="HyperMD-header"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-heading-decoration-first-heading-padding-top-px);
+  padding-top: var(--rl-edit-heading-decoration-first-heading-padding-top-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .cm-content > .cm-line:first-child[class*="HyperMD-header"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  translate: 0 var(--rl-edit-heading-decoration-first-heading-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-1:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-edit-headings-h1-decor-height-px) !important;
+  margin-top: var(--rl-edit-headings-h1-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-2:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-edit-headings-h2-decor-height-px) !important;
+  margin-top: var(--rl-edit-headings-h2-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-3:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-edit-headings-h3-decor-height-px) !important;
+  margin-top: var(--rl-edit-headings-h3-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-4:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-edit-headings-h4-decor-height-px) !important;
+  margin-top: var(--rl-edit-headings-h4-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-5:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-edit-headings-h5-decor-height-px) !important;
+  margin-top: var(--rl-edit-headings-h5-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .HyperMD-header-6:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-edit-headings-h6-decor-height-px) !important;
+  margin-top: var(--rl-edit-headings-h6-decor-offset-px) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Reading view: headings and theme-provided decorations
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h1 > h1:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-headings-h1-line-height) !important;
+  margin-top: var(--rl-read-headings-h1-top-em) !important;
+  margin-bottom: var(--rl-read-headings-h1-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h2 > h2:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-headings-h2-line-height) !important;
+  margin-top: var(--rl-read-headings-h2-top-em) !important;
+  margin-bottom: var(--rl-read-headings-h2-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h3 > h3:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-headings-h3-line-height) !important;
+  margin-top: var(--rl-read-headings-h3-top-em) !important;
+  margin-bottom: var(--rl-read-headings-h3-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h4 > h4:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-headings-h4-line-height) !important;
+  margin-top: var(--rl-read-headings-h4-top-em) !important;
+  margin-bottom: var(--rl-read-headings-h4-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h5 > h5:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-headings-h5-line-height) !important;
+  margin-top: var(--rl-read-headings-h5-top-em) !important;
+  margin-bottom: var(--rl-read-headings-h5-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h6 > h6:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-headings-h6-line-height) !important;
+  margin-top: var(--rl-read-headings-h6-top-em) !important;
+  margin-bottom: var(--rl-read-headings-h6-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) :is(h1, h2, h3, h4, h5, h6):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  position: relative;
+  text-indent: 0 !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) :is(h1, h2, h3, h4, h5, h6):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  position: absolute !important;
+  top: 50% !important;
+  left: var(--rl-read-heading-decoration-left-px) !important;
+  display: inline-block !important;
+  width: var(--rl-read-heading-decoration-width-px) !important;
+  margin-right: var(--rl-read-heading-decoration-margin-right-px) !important;
+  border-radius: var(--rl-read-heading-decoration-radius-px) !important;
+  vertical-align: middle !important;
+  transform: translateY(-50%) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h1 h1:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-read-headings-h1-decor-height-px) !important;
+  margin-top: var(--rl-read-headings-h1-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h2 h2:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-read-headings-h2-decor-height-px) !important;
+  margin-top: var(--rl-read-headings-h2-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h3 h3:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-read-headings-h3-decor-height-px) !important;
+  margin-top: var(--rl-read-headings-h3-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h4 h4:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-read-headings-h4-decor-height-px) !important;
+  margin-top: var(--rl-read-headings-h4-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h5 h5:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-read-headings-h5-decor-height-px) !important;
+  margin-top: var(--rl-read-headings-h5-decor-offset-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-headings .markdown-rendered .el-h6 h6:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+  height: var(--rl-read-headings-h6-decor-height-px) !important;
+  margin-top: var(--rl-read-headings-h6-decor-offset-px) !important;
+}
+
+/*
+ * Modern browsers can anchor an absolute pseudo-element to the first line's
+ * line box. Keep the 50% rules above as the compatibility fallback for older
+ * Electron versions, then use the first-line center when lh is supported.
+ * CodeMirror positions the pseudo-element from the line element's top edge,
+ * while the first line box starts below its padding. A second translation
+ * applies that exact padding without arithmetic and remains independent from
+ * the user-controlled decoration offsets.
+ */
+@supports (top: 1lh) {
+  body.refined-layout-enabled.rl-edit-headings .markdown-source-view.mod-cm6 .cm-content [class*="HyperMD-header"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+    top: 0.5lh !important;
+    transform: translateY(-50%) translateY(var(--rl-edit-heading-decoration-line-padding-top, 0px)) !important;
+  }
+
+  body.refined-layout-enabled.rl-read-headings .markdown-rendered :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) :is(h1, h2, h3, h4, h5, h6):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *))::before {
+    top: 0.5lh !important;
+    transform: translateY(-50%) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Callouts: editing view
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout .callout):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding: var(--rl-edit-callout-padding-top-px) var(--rl-edit-callout-padding-right-px) var(--rl-edit-callout-padding-bottom-px) var(--rl-edit-callout-padding-left-px) !important;
+  margin-top: var(--rl-edit-callout-margin-top-px) !important;
+  margin-bottom: var(--rl-edit-callout-margin-bottom-px) !important;
+  border-radius: var(--rl-edit-callout-radius-px) !important;
+  box-shadow: none !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-title:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-callout-title-line-height) !important;
+  padding: var(--rl-edit-callout-title-padding-top-em) var(--rl-edit-callout-title-padding-right-px) var(--rl-edit-callout-title-padding-bottom-em) var(--rl-edit-callout-title-padding-left-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-title:not(:has(+ .callout-content > *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-callout-title-only-padding-top-em) !important;
+  padding-bottom: var(--rl-edit-callout-title-only-padding-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 .callout.is-collapsible.is-collapsed:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-callout-collapsed-padding-top-em) !important;
+  padding-bottom: var(--rl-edit-callout-collapsed-padding-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 .callout.is-collapsible.is-collapsed .callout-title:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-bottom: 0 !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content p:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-callout-paragraph-line-height) !important;
+  margin-block-start: 0 !important;
+  margin-block-end: var(--rl-edit-callout-paragraph-spacing-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) li + li:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-callout-list-item-start-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) li:not(:last-child):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-end: var(--rl-edit-callout-list-item-end-em) !important;
+}
+
+/* Nested sub-lists are item-level rhythm, not a list block of their own. */
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) :is(ul, ol):not(li > *):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-callout-list-block-start-em) !important;
+  margin-block-end: var(--rl-edit-callout-list-block-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) :is(ul, ol):last-child:not(li > *):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-end: var(--rl-edit-callout-last-list-end-em) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Callouts: reading view
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding: var(--rl-read-callout-padding-top-px) var(--rl-read-callout-padding-right-px) var(--rl-read-callout-padding-bottom-px) var(--rl-read-callout-padding-left-px) !important;
+  margin-top: var(--rl-read-callout-margin-top-px) !important;
+  margin-bottom: var(--rl-read-callout-margin-bottom-px) !important;
+  border-radius: var(--rl-read-callout-radius-px) !important;
+  box-shadow: none !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout-title:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-callout-title-line-height) !important;
+  padding: var(--rl-read-callout-title-padding-top-em) var(--rl-read-callout-title-padding-right-px) var(--rl-read-callout-title-padding-bottom-em) var(--rl-read-callout-title-padding-left-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout > .callout-title:not(:has(+ .callout-content > *)):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-read-callout-title-only-padding-top-em) !important;
+  padding-bottom: var(--rl-read-callout-title-only-padding-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout.is-collapsible.is-collapsed:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-read-callout-collapsed-padding-top-em) !important;
+  padding-bottom: var(--rl-read-callout-collapsed-padding-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout.is-collapsible.is-collapsed .callout-title:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-bottom: 0 !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout-content p:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-callout-paragraph-line-height) !important;
+  margin-block-start: 0 !important;
+  margin-block-end: var(--rl-read-callout-paragraph-spacing-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout li + li:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-read-callout-list-item-start-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout li:not(:last-child):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-end: var(--rl-read-callout-list-item-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout :is(ul, ol):not(li > *):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-read-callout-list-block-start-em) !important;
+  margin-block-end: var(--rl-read-callout-list-block-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout :is(ul, ol):last-child:not(li > *):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-end: var(--rl-read-callout-last-list-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout hr:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: 0.55em !important;
+  margin-bottom: 0.5em !important;
+}
+
+/* Callout inner headings: editing */
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content :is(h1, .HyperMD-header-1):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-callout-headings-h1-line-height) !important;
+  margin-top: var(--rl-edit-callout-headings-h1-top-em) !important;
+  margin-bottom: var(--rl-edit-callout-headings-h1-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content :is(h2, .HyperMD-header-2):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-callout-headings-h2-line-height) !important;
+  margin-top: var(--rl-edit-callout-headings-h2-top-em) !important;
+  margin-bottom: var(--rl-edit-callout-headings-h2-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content :is(h3, .HyperMD-header-3):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-callout-headings-h3-line-height) !important;
+  margin-top: var(--rl-edit-callout-headings-h3-top-em) !important;
+  margin-bottom: var(--rl-edit-callout-headings-h3-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content :is(h4, .HyperMD-header-4):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-callout-headings-h4-line-height) !important;
+  margin-top: var(--rl-edit-callout-headings-h4-top-em) !important;
+  margin-bottom: var(--rl-edit-callout-headings-h4-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content :is(h5, .HyperMD-header-5):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-callout-headings-h5-line-height) !important;
+  margin-top: var(--rl-edit-callout-headings-h5-top-em) !important;
+  margin-bottom: var(--rl-edit-callout-headings-h5-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content :is(h6, .HyperMD-header-6):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-callout-headings-h6-line-height) !important;
+  margin-top: var(--rl-edit-callout-headings-h6-top-em) !important;
+  margin-bottom: var(--rl-edit-callout-headings-h6-bottom-em) !important;
+}
+
+/* Callout inner headings: reading */
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout-content h1:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-callout-headings-h1-line-height) !important;
+  margin-top: var(--rl-read-callout-headings-h1-top-em) !important;
+  margin-bottom: var(--rl-read-callout-headings-h1-bottom-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout-content h2:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-callout-headings-h2-line-height) !important;
+  margin-top: var(--rl-read-callout-headings-h2-top-em) !important;
+  margin-bottom: var(--rl-read-callout-headings-h2-bottom-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout-content h3:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-callout-headings-h3-line-height) !important;
+  margin-top: var(--rl-read-callout-headings-h3-top-em) !important;
+  margin-bottom: var(--rl-read-callout-headings-h3-bottom-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout-content h4:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-callout-headings-h4-line-height) !important;
+  margin-top: var(--rl-read-callout-headings-h4-top-em) !important;
+  margin-bottom: var(--rl-read-callout-headings-h4-bottom-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout-content h5:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-callout-headings-h5-line-height) !important;
+  margin-top: var(--rl-read-callout-headings-h5-top-em) !important;
+  margin-bottom: var(--rl-read-callout-headings-h5-bottom-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout-content h6:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-callout-headings-h6-line-height) !important;
+  margin-top: var(--rl-read-callout-headings-h6-top-em) !important;
+  margin-bottom: var(--rl-read-callout-headings-h6-bottom-px) !important;
+}
+
+/* A heading immediately after the Callout title owns the vertical gap. */
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-title + .callout-content > :is(h1, h2, h3, h4, h5, h6, [class*="HyperMD-header"], .el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6):first-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-title + .callout-content > :first-child:has([class*="HyperMD-header"]):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: 0px;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout .callout-title + .callout-content > :is(h1, h2, h3, h4, h5, h6, .el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6):first-child:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout .callout-title + .callout-content > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6):first-child > :is(h1, h2, h3, h4, h5, h6):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Blockquotes
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-blockquote-paragraph-line-height) !important;
+  padding-block-end: var(--rl-edit-blockquote-paragraph-spacing-em) !important;
+}
+
+/* Padding, not margin — see the source-view note on the body list rules. */
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-list-line:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-block-start: var(--rl-edit-blockquote-list-item-start-em) !important;
+  padding-block-end: var(--rl-edit-blockquote-list-item-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-list-line:first-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 :not(.HyperMD-list-line) + .cm-line.HyperMD-quote.HyperMD-list-line:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-block-start: var(--rl-edit-blockquote-list-block-start-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-list-line:last-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-list-line:has(+ :not(.HyperMD-list-line)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-block-end: var(--rl-edit-blockquote-list-block-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote p:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-blockquote-paragraph-line-height) !important;
+  margin-block-start: 0 !important;
+  margin-block-end: var(--rl-read-blockquote-paragraph-spacing-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote li + li:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-read-blockquote-list-item-start-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote li:not(:last-child):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-end: var(--rl-read-blockquote-list-item-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote :is(ul, ol):not(li > *):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-read-blockquote-list-block-start-em) !important;
+  margin-block-end: var(--rl-read-blockquote-list-block-end-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote hr:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: 0.55em !important;
+  margin-bottom: 0.5em !important;
+}
+
+/* Blockquote headings: editing */
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-header-1:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-blockquote-headings-h1-top-em);
+  line-height: var(--rl-edit-blockquote-headings-h1-line-height) !important;
+  padding-top: var(--rl-edit-blockquote-headings-h1-top-em) !important;
+  padding-bottom: var(--rl-edit-blockquote-headings-h1-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-header-2:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-blockquote-headings-h2-top-em);
+  line-height: var(--rl-edit-blockquote-headings-h2-line-height) !important;
+  padding-top: var(--rl-edit-blockquote-headings-h2-top-em) !important;
+  padding-bottom: var(--rl-edit-blockquote-headings-h2-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-header-3:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-blockquote-headings-h3-top-em);
+  line-height: var(--rl-edit-blockquote-headings-h3-line-height) !important;
+  padding-top: var(--rl-edit-blockquote-headings-h3-top-em) !important;
+  padding-bottom: var(--rl-edit-blockquote-headings-h3-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-header-4:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-blockquote-headings-h4-top-em);
+  line-height: var(--rl-edit-blockquote-headings-h4-line-height) !important;
+  padding-top: var(--rl-edit-blockquote-headings-h4-top-em) !important;
+  padding-bottom: var(--rl-edit-blockquote-headings-h4-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-header-5:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-blockquote-headings-h5-top-em);
+  line-height: var(--rl-edit-blockquote-headings-h5-line-height) !important;
+  padding-top: var(--rl-edit-blockquote-headings-h5-top-em) !important;
+  padding-bottom: var(--rl-edit-blockquote-headings-h5-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 .cm-line.HyperMD-quote.HyperMD-header-6:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  --rl-edit-heading-decoration-line-padding-top: var(--rl-edit-blockquote-headings-h6-top-em);
+  line-height: var(--rl-edit-blockquote-headings-h6-line-height) !important;
+  padding-top: var(--rl-edit-blockquote-headings-h6-top-em) !important;
+  padding-bottom: var(--rl-edit-blockquote-headings-h6-bottom-em) !important;
+}
+
+/* Blockquote headings: reading */
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote h1:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-blockquote-headings-h1-line-height) !important;
+  margin-top: var(--rl-read-blockquote-headings-h1-top-em) !important;
+  margin-bottom: var(--rl-read-blockquote-headings-h1-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote h2:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-blockquote-headings-h2-line-height) !important;
+  margin-top: var(--rl-read-blockquote-headings-h2-top-em) !important;
+  margin-bottom: var(--rl-read-blockquote-headings-h2-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote h3:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-blockquote-headings-h3-line-height) !important;
+  margin-top: var(--rl-read-blockquote-headings-h3-top-em) !important;
+  margin-bottom: var(--rl-read-blockquote-headings-h3-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote h4:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-blockquote-headings-h4-line-height) !important;
+  margin-top: var(--rl-read-blockquote-headings-h4-top-em) !important;
+  margin-bottom: var(--rl-read-blockquote-headings-h4-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote h5:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-blockquote-headings-h5-line-height) !important;
+  margin-top: var(--rl-read-blockquote-headings-h5-top-em) !important;
+  margin-bottom: var(--rl-read-blockquote-headings-h5-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote h6:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-blockquote-headings-h6-line-height) !important;
+  margin-top: var(--rl-read-blockquote-headings-h6-top-em) !important;
+  margin-bottom: var(--rl-read-blockquote-headings-h6-bottom-em) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Images
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 :is(
+  .cm-content > .image-embed,
+  .cm-content > .cm-line .image-embed
+):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  display: block !important;
+  width: fit-content !important;
+  max-width: var(--rl-edit-image-max-width-pct) !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 :is(
+  .cm-content > .image-embed,
+  .cm-content > .cm-line .image-embed
+) img[src]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  max-width: 100% !important;
+  height: auto !important;
+  border: var(--rl-edit-image-border-px) solid var(--background-modifier-border);
+  border-radius: var(--rl-edit-image-radius-px) !important;
+  object-fit: cover;
+}
+
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 :is(
+  .cm-content > img[src][contenteditable="false"],
+  .cm-content > .cm-line img[src][contenteditable="false"]
+):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  display: block !important;
+  max-width: var(--rl-edit-image-max-width-pct) !important;
+  height: auto !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  border: var(--rl-edit-image-border-px) solid var(--background-modifier-border);
+  border-radius: var(--rl-edit-image-radius-px) !important;
+  object-fit: cover;
+}
+
+body.refined-layout-enabled.rl-read-images .markdown-preview-view.markdown-rendered .markdown-preview-section > .el-p > p > img[src]:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  display: block !important;
+  width: auto !important;
+  max-width: var(--rl-read-image-max-width-pct) !important;
+  height: auto !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  border: var(--rl-read-image-border-px) solid var(--background-modifier-border);
+  border-radius: var(--rl-read-image-radius-px) !important;
+  object-fit: cover;
+}
+
+/* CM6 places zero-width cursor buffers on both sides of an inline widget.
+   A block-level embed splits those buffers into two anonymous line boxes,
+   adding a full line of space above and below the image. Keep the widget
+   inline, and center its inner wrapper within a full-width inline flex box. */
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 .cm-content > .cm-line .image-embed:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *, .block-language-dataviewjs *, .callout *, .cm-callout *)) {
+  display: inline-flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  justify-content: center;
+  vertical-align: bottom;
+}
+
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 .cm-content > .cm-line .image-embed > .image-wrapper:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *, .block-language-dataviewjs *, .callout *, .cm-callout *)) {
+  width: fit-content !important;
+  max-width: var(--rl-edit-image-max-width-pct) !important;
+  min-width: 0;
+  margin-block: 0 !important;
+  padding-block: 0 !important;
+}
+
+/* Keep source-view spacing inside the measured box, including block widgets.
+   Real source blank lines retain the body's blank-line height. */
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 .cm-content > .image-embed:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *, .block-language-dataviewjs *, .callout *, .cm-callout *)),
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 .cm-content > .cm-line:where(:has(.image-embed, img[src][contenteditable="false"])):not(:where(.HyperMD-quote, .HyperMD-list-line, .HyperMD-header)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *, .block-language-dataviewjs *, .callout *, .cm-callout *)) {
+  margin-block-start: 0 !important;
+  margin-block-end: 0 !important;
+  padding-block-start: var(--rl-edit-image-margin-top-px) !important;
+  padding-block-end: var(--rl-edit-image-margin-bottom-px) !important;
+}
+
+/* Nested image widgets must not add a second layer of vertical spacing. */
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 .cm-content > .cm-line .image-embed:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *, .block-language-dataviewjs *, .callout *, .cm-callout *)),
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 .cm-content > .cm-line img[src][contenteditable="false"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *, .block-language-dataviewjs *, .callout *, .cm-callout *)) {
+  margin-block-start: 0 !important;
+  margin-block-end: 0 !important;
+  padding-block-start: 0 !important;
+  padding-block-end: 0 !important;
+}
+
+body.refined-layout-enabled.rl-edit-images .markdown-source-view.mod-cm6 .cm-content > img[src][contenteditable="false"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *, .block-language-dataviewjs *, .callout *, .cm-callout *)) {
+  margin-block-start: var(--rl-edit-image-margin-top-px) !important;
+  margin-block-end: var(--rl-edit-image-margin-bottom-px) !important;
+}
+
+/* Own the paragraph margins rather than adding image margins on top of them. */
+body.refined-layout-enabled.rl-read-images .markdown-preview-view.markdown-rendered .markdown-preview-section > .el-p > p:where(:has(> img[src], > .image-embed)):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-read-image-margin-top-px) !important;
+  margin-block-end: var(--rl-read-image-margin-bottom-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-images .markdown-preview-view.markdown-rendered .markdown-preview-section > .el-p > p:where(:has(> img[src], > .image-embed)) > :is(img[src], .image-embed):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: 0 !important;
+  margin-block-end: 0 !important;
+}
+
+/* Callout images use their own settings and never inherit body-image values. */
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content :is(
+  .image-embed,
+  .cm-line .image-embed
+):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  display: block !important;
+  width: fit-content !important;
+  max-width: var(--rl-edit-callout-image-max-width-pct) !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content :is(
+  .image-embed img[src],
+  .cm-line img[src][contenteditable="false"]
+):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  display: block !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  border: var(--rl-edit-callout-image-border-px) solid var(--background-modifier-border) !important;
+  border-radius: var(--rl-edit-callout-image-radius-px) !important;
+  object-fit: cover;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout .callout-content p:has(> img[src]):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  text-align: center !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered .callout .callout-content p > img[src]:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  display: block !important;
+  width: auto !important;
+  max-width: var(--rl-read-callout-image-max-width-pct) !important;
+  height: auto !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  border: var(--rl-read-callout-image-border-px) solid var(--background-modifier-border) !important;
+  border-radius: var(--rl-read-callout-image-radius-px) !important;
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------------
+   Mermaid: aspect-ratio-aware sizing
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-mermaid .markdown-source-view.mod-cm6 .mermaid:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *)),
+body.refined-layout-enabled.rl-read-mermaid .markdown-preview-view.markdown-rendered .mermaid:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *)) {
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+
+body.refined-layout-enabled.rl-edit-mermaid .markdown-source-view.mod-cm6 .mermaid:not(:where(.block-language-dataviewjs *)) > svg:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *)),
+body.refined-layout-enabled.rl-read-mermaid .markdown-preview-view.markdown-rendered .mermaid:not(:where(.block-language-dataviewjs *)) > svg:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *)) {
+  display: block !important;
+  width: 100% !important;
+  min-width: var(--rl-edit-mermaid-landscape-min-width-px) !important;
+  max-width: none !important;
+  height: auto !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+body.refined-layout-enabled.rl-read-mermaid .markdown-preview-view.markdown-rendered .mermaid:not(:where(.block-language-dataviewjs *)) > svg:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *)) {
+  min-width: var(--rl-read-mermaid-landscape-min-width-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-mermaid .markdown-source-view.mod-cm6 .mermaid.rl-mermaid-portrait:not(:where(.block-language-dataviewjs *)) > svg:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *)) {
+  --rl-mermaid-natural-width: 100%;
+
+  width: var(--rl-mermaid-natural-width) !important;
+  min-width: 0 !important;
+  max-width: var(--rl-edit-mermaid-portrait-max-width-pct) !important;
+}
+
+body.refined-layout-enabled.rl-read-mermaid .markdown-preview-view.markdown-rendered .mermaid.rl-mermaid-portrait:not(:where(.block-language-dataviewjs *)) > svg:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *)) {
+  --rl-mermaid-natural-width: 100%;
+
+  width: var(--rl-mermaid-natural-width) !important;
+  min-width: 0 !important;
+  max-width: var(--rl-read-mermaid-portrait-max-width-pct) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Tables: top-level body, Callout and blockquote contexts
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 blockquote table:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote table:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  overflow: hidden !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border: var(--rl-edit-table-outer-border-px) solid var(--background-modifier-border) !important;
+  border-radius: var(--rl-edit-table-radius-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border: var(--rl-read-table-outer-border-px) solid var(--background-modifier-border) !important;
+  border-radius: var(--rl-read-table-radius-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-edit-callout-table-spacing-top-px) !important;
+  margin-bottom: var(--rl-edit-callout-table-spacing-bottom-px) !important;
+  border: var(--rl-edit-callout-table-outer-border-px) solid var(--background-modifier-border) !important;
+  border-radius: var(--rl-edit-callout-table-radius-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-callout-table-spacing-top-px) !important;
+  margin-bottom: var(--rl-read-callout-table-spacing-bottom-px) !important;
+  border: var(--rl-read-callout-table-outer-border-px) solid var(--background-modifier-border) !important;
+  border-radius: var(--rl-read-callout-table-radius-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 blockquote table:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-edit-blockquote-table-spacing-top-px) !important;
+  margin-bottom: var(--rl-edit-blockquote-table-spacing-bottom-px) !important;
+  border: var(--rl-edit-blockquote-table-outer-border-px) solid var(--background-modifier-border) !important;
+  border-radius: var(--rl-edit-blockquote-table-radius-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote table:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-blockquote-table-spacing-top-px) !important;
+  margin-bottom: var(--rl-read-blockquote-table-spacing-bottom-px) !important;
+  border: var(--rl-read-blockquote-table-outer-border-px) solid var(--background-modifier-border) !important;
+  border-radius: var(--rl-read-blockquote-table-radius-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *) :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding: var(--rl-edit-table-cell-padding-px) !important;
+  border-right: var(--rl-edit-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-bottom: var(--rl-edit-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-left: var(--rl-edit-table-inner-border-px) solid var(--background-modifier-border) !important;
+}
+
+body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)) :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding: var(--rl-read-table-cell-padding-px) !important;
+  border-right: var(--rl-read-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-bottom: var(--rl-read-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-left: var(--rl-read-table-inner-border-px) solid var(--background-modifier-border) !important;
+}
+
+body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding: var(--rl-edit-callout-table-cell-padding-px) !important;
+  border-right: var(--rl-edit-callout-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-bottom: var(--rl-edit-callout-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-left: var(--rl-edit-callout-table-inner-border-px) solid var(--background-modifier-border) !important;
+}
+
+body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *)) :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding: var(--rl-read-callout-table-cell-padding-px) !important;
+  border-right: var(--rl-read-callout-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-bottom: var(--rl-read-callout-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-left: var(--rl-read-callout-table-inner-border-px) solid var(--background-modifier-border) !important;
+}
+
+body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 blockquote table :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding: var(--rl-edit-blockquote-table-cell-padding-px) !important;
+  border-right: var(--rl-edit-blockquote-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-bottom: var(--rl-edit-blockquote-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-left: var(--rl-edit-blockquote-table-inner-border-px) solid var(--background-modifier-border) !important;
+}
+
+body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote table:not(:where(.block-language-dataviewjs *)) :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding: var(--rl-read-blockquote-table-cell-padding-px) !important;
+  border-right: var(--rl-read-blockquote-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-bottom: var(--rl-read-blockquote-table-inner-border-px) solid var(--background-modifier-border) !important;
+  border-left: var(--rl-read-blockquote-table-inner-border-px) solid var(--background-modifier-border) !important;
+}
+
+/* All enabled table contexts share the same edge cleanup behavior. */
+:is(
+  body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *),
+  body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 blockquote table,
+  body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote table:not(:where(.block-language-dataviewjs *))
+) :is(td, th):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-top: none !important;
+}
+
+:is(
+  body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *),
+  body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *))
+) th:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-radius: 0 !important;
+}
+
+/* Baseline and similar themes can put radius on the first visible row. */
+:is(
+  body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *),
+  body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *))
+) :is(thead, tbody) > tr:first-child > :is(th, td):first-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-top-left-radius: 0 !important;
+}
+
+:is(
+  body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *),
+  body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *))
+) :is(thead, tbody) > tr:first-child > :is(th, td):last-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-top-right-radius: 0 !important;
+}
+
+/* Callout table headers must not form a rounded lower edge. Keep the table's
+   outer radius and the final data row radius intact. */
+:is(
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *))
+) :is(thead > tr:first-child, tbody > tr:first-child) > :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* Remove the upper inner corners between adjacent Callout header cells while
+   preserving the table's two outer top corners. */
+:is(
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *))
+) :is(thead > tr:first-child, tbody:only-child > tr:first-child) > :is(th, td):first-child:not(:last-child):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-top-right-radius: 0 !important;
+}
+
+:is(
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *))
+) :is(thead > tr:first-child, tbody:only-child > tr:first-child) > :is(th, td):last-child:not(:first-child):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-top-left-radius: 0 !important;
+}
+
+:is(
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *))
+) :is(thead > tr:first-child, tbody:only-child > tr:first-child) > :is(th, td):not(:first-child):not(:last-child):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+:is(
+  body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *),
+  body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 blockquote table,
+  body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote table:not(:where(.block-language-dataviewjs *))
+) :is(th, td):first-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-left: none !important;
+}
+
+:is(
+  body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *),
+  body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 blockquote table,
+  body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote table:not(:where(.block-language-dataviewjs *))
+) :is(th, td):last-child:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-right: none !important;
+  border-left: none !important;
+}
+
+:is(
+  body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *),
+  body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 blockquote table,
+  body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote table:not(:where(.block-language-dataviewjs *))
+) tbody tr:last-child :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+:is(
+  body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-content table:not(.callout *):not(blockquote *),
+  body.refined-layout-enabled.rl-read-tables .markdown-rendered table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-callouts .markdown-source-view.mod-cm6 :is(.callout, .callout-content) table,
+  body.refined-layout-enabled.rl-read-callouts .markdown-rendered :is(.callout, .callout-content) table:not(:where(.block-language-dataviewjs *)),
+  body.refined-layout-enabled.rl-edit-blockquotes .markdown-source-view.mod-cm6 blockquote table,
+  body.refined-layout-enabled.rl-read-blockquotes .markdown-rendered .el-blockquote table:not(:where(.block-language-dataviewjs *))
+) thead:only-child tr :is(th, td):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  border-bottom: none !important;
+}
+
+body.refined-layout-enabled.rl-edit-tables .markdown-source-view.mod-cm6 .cm-embed-block.cm-table-widget.markdown-rendered:not(.callout *):not(blockquote *):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-table-spacing-top-px) !important;
+  padding-bottom: var(--rl-edit-table-spacing-bottom-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-tables .markdown-rendered .el-table > table:not(.callout *):not(.el-blockquote *):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-table-spacing-top-px) !important;
+  margin-bottom: var(--rl-read-table-spacing-bottom-px) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Heading followed by the first content element
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + .cm-line:has(> br:only-child):has(+ :is(
+  .cm-line:not([class*="HyperMD-header"]),
+  .cm-callout,
+  .cm-table-widget,
+  .image-embed
+)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-heading-gap-body-empty-line-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + .cm-line:not(:has(> br:only-child)):not([class*="HyperMD"]):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-body-paragraph-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + [class*="HyperMD-list-line"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-body-list-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + [class*="HyperMD-quote"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-body-quote-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + .HyperMD-codeblock-begin:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-body-code-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + .cm-table-widget:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-heading-gap-body-table-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + .image-embed:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-block-start: var(--rl-edit-heading-gap-body-image-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + .cm-line:not([class*="HyperMD"]):has(.image-embed, img[src][contenteditable="false"]):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *, .block-language-dataviewjs *, .callout *, .cm-callout *)) {
+  padding-block-start: var(--rl-edit-heading-gap-body-image-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + .callout.drop-shadow:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)),
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"] + .cm-callout .callout:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-heading-gap-body-callout-em) !important;
+}
+
+/* Callout context in Live Preview. */
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content > .cm-line:has(> br:only-child):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-heading-gap-callout-empty-line-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content > [class*="HyperMD-header"] + .cm-line:not(:has(> br:only-child)):not([class*="HyperMD"]):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-callout-paragraph-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content > [class*="HyperMD-header"] + [class*="HyperMD-list-line"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-callout-list-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content > [class*="HyperMD-header"] + [class*="HyperMD-quote"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-callout-quote-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content > [class*="HyperMD-header"] + .HyperMD-codeblock-begin:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-callout-code-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content > [class*="HyperMD-header"] + .cm-table-widget:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-heading-gap-callout-table-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content > [class*="HyperMD-header"] + .image-embed:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-heading-gap-callout-image-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 :is(.callout.drop-shadow, .cm-callout) .callout-content > [class*="HyperMD-header"] + :is(.callout.drop-shadow, .cm-callout):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-heading-gap-callout-callout-px) !important;
+}
+
+/* Quote context in Live Preview. */
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"][class*="HyperMD-quote"] + [class*="HyperMD-quote"]:has(> br:only-child):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-heading-gap-blockquote-empty-line-em) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"][class*="HyperMD-quote"] + [class*="HyperMD-quote"]:not([class*="HyperMD-header"]):not([class*="HyperMD-list-line"]):not([class*="HyperMD-codeblock"]):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-blockquote-paragraph-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"][class*="HyperMD-quote"] + [class*="HyperMD-list-line"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-blockquote-list-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"][class*="HyperMD-quote"] + [class*="HyperMD-quote"]:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-blockquote-quote-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"][class*="HyperMD-quote"] + .HyperMD-codeblock-begin:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  padding-top: var(--rl-edit-heading-gap-blockquote-code-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"][class*="HyperMD-quote"] + .cm-table-widget:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-heading-gap-blockquote-table-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"][class*="HyperMD-quote"] + .image-embed:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-heading-gap-blockquote-image-px) !important;
+}
+
+body.refined-layout-enabled.rl-edit-heading-gaps .markdown-source-view.mod-cm6 .cm-content > [class*="HyperMD-header"][class*="HyperMD-quote"] + .cm-callout:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: var(--rl-edit-heading-gap-blockquote-callout-px) !important;
+}
+
+/* Reading view: top-level body headings. */
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .markdown-preview-section > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) + .el-p:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-body-paragraph-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .markdown-preview-section > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) + :is(.el-ul, .el-ol):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-body-list-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .markdown-preview-section > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) + .el-blockquote:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-body-quote-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .markdown-preview-section > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) + .el-pre:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-body-code-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .markdown-preview-section > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) + .el-table:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-body-table-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .markdown-preview-section > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) + .el-p:has(> p > img[src]):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-body-image-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps.rl-read-images .markdown-preview-view.markdown-rendered .markdown-preview-section > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) + .el-p > p:has(> img[src]):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-block-start: 0 !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .markdown-preview-section > :is(.el-h1, .el-h2, .el-h3, .el-h4, .el-h5, .el-h6) + .callout:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-body-callout-em) !important;
+}
+
+/* Reading view: Callout context. */
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .callout-content > :is(h1, h2, h3, h4, h5, h6) + p:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-callout-paragraph-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .callout-content > :is(h1, h2, h3, h4, h5, h6) + :is(ul, ol):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-callout-list-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .callout-content > :is(h1, h2, h3, h4, h5, h6) + blockquote:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-callout-quote-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .callout-content > :is(h1, h2, h3, h4, h5, h6) + pre:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-callout-code-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .callout-content > :is(h1, h2, h3, h4, h5, h6) + table:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-callout-table-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .callout-content > :is(h1, h2, h3, h4, h5, h6) + p:has(> img[src]):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-callout-image-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .callout-content > :is(h1, h2, h3, h4, h5, h6) + .callout:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-callout-callout-px) !important;
+}
+
+/* Reading view: Quote context. */
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .el-blockquote > :is(h1, h2, h3, h4, h5, h6) + p:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-blockquote-paragraph-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .el-blockquote > :is(h1, h2, h3, h4, h5, h6) + :is(ul, ol):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-blockquote-list-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .el-blockquote > :is(h1, h2, h3, h4, h5, h6) + blockquote:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-blockquote-quote-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .el-blockquote > :is(h1, h2, h3, h4, h5, h6) + pre:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-blockquote-code-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .el-blockquote > :is(h1, h2, h3, h4, h5, h6) + table:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-blockquote-table-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .el-blockquote > :is(h1, h2, h3, h4, h5, h6) + p:has(> img[src]):not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-blockquote-image-px) !important;
+}
+
+body.refined-layout-enabled.rl-read-heading-gaps .markdown-rendered .el-blockquote > :is(h1, h2, h3, h4, h5, h6) + .callout:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  margin-top: var(--rl-read-heading-gap-blockquote-callout-px) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Code blocks
+   -------------------------------------------------------------------------- */
+
+body.refined-layout-enabled.rl-edit-code-blocks .markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock.HyperMD-codeblock-bg:not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-code-block-line-height) !important;
+}
+
+body.refined-layout-enabled.rl-edit-code-blocks .markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock.HyperMD-codeblock-bg:has(br:only-child):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-edit-code-block-inner-spacing-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-code-blocks .markdown-rendered pre[class*="language-"]:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-code-block-line-height) !important;
+  margin-top: var(--rl-read-code-block-margin-top-em) !important;
+  margin-bottom: var(--rl-read-code-block-margin-bottom-em) !important;
+}
+
+body.refined-layout-enabled.rl-read-code-blocks .markdown-rendered code[class*="language-"]:not(:where(.block-language-dataviewjs *)):not(:where(.canvas-wrapper, .canvas-wrapper *, .canvas-node, .canvas-node *, .mermaid, .mermaid *)) {
+  line-height: var(--rl-read-code-block-line-height) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Settings: native category pages and mode switch
+   -------------------------------------------------------------------------- */
+
+/* Only add breathing room at the bottom. The horizontal padding comes from
+   Obsidian's own settings pane, so the page lines up with every other plugin. */
+.refined-layout-settings {
+  padding-bottom: var(--size-4-12, 48px);
+}
+
+/* Keep the mode tabs outside the native configuration and category cards. */
+.rl-settings-mode-group > .setting-items,
+.rl-settings-mode-group .setting-item.rl-settings-mode-row {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.refined-layout-settings.rl-settings-native-group {
+  padding-bottom: 0;
+}
+
+/* Mode switch ------------------------------------------------------------- */
+
+.refined-layout-settings .rl-settings-mode-switch {
+  display: inline-flex;
+  align-self: flex-start;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m, 8px);
+  background: var(--background-secondary);
+  box-sizing: border-box;
+}
+
+.refined-layout-settings .rl-settings-mode-button {
+  appearance: none;
+  min-width: 104px;
+  height: 28px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--radius-s, 4px);
+  color: var(--text-muted);
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: var(--font-ui-small, 13px);
+  font-weight: var(--font-medium, 500);
+  white-space: nowrap;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.refined-layout-settings .rl-settings-mode-button:hover {
+  color: var(--text-normal);
+}
+
+.refined-layout-settings .rl-settings-mode-button.rl-settings-mode-active {
+  color: var(--text-on-accent);
+  background: var(--interactive-accent);
+  font-weight: var(--font-semibold, 600);
+}
+
+.refined-layout-settings .rl-settings-mode-button:focus-visible {
+  outline: 2px solid var(--background-modifier-border-focus);
+  outline-offset: 1px;
+}
+
+.refined-layout-settings .rl-settings-number {
+  width: 84px;
+  padding: 4px 8px;
+  border-radius: var(--radius-s, 4px);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.refined-layout-settings .rl-settings-unit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 22px;
+  height: 24px;
+  padding: 0;
+  border-radius: 0;
+  color: var(--text-muted);
+  background: transparent;
+  font-size: var(--font-ui-smaller, 12px);
+  font-weight: var(--font-medium, 500);
+}
